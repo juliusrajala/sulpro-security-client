@@ -4,10 +4,22 @@ import datetime
 from time import gmtime, strftime
 from messenger import Messenger
 
+import time
+try:
+  import RPi.GPIO as GPIO
+except:
+  print "Likely not using raspberry pi"
+  pass
+
 class controller(object):
   def __init__(self):
     self.con = socket.socket()
     self.messenger = Messenger()
+    
+    #Variables to display uptime etc.
+    self.online_from = strftime("%d-%m-%Y %H:%M:%S")
+    self.alert_since = ""
+    self.last_danger = ""
     
     #Different states of the controller
     self.alert = False
@@ -30,11 +42,12 @@ class controller(object):
     print data
     #Different chat commands
     command_dictionary = {
-      "PING":self.ping_response,
+      "PING": self.ping_response,
       "!OK" : self.handle_alert,
       "!ON" : self.start_watching,
       "!OF" : self.stop_watching,
-      "!EX" : self.exit 
+      "!EX" : self.exit,
+      "!ST" : self.get_status
     }
     message = data.split(" ")
     if message[0] == "PING":
@@ -75,11 +88,20 @@ class controller(object):
     self.danger = False;
 
   def start_watching(self):
+    self.alert_since = strftime("%d-%m-%Y %H:%M:%S")
     print "Going into watch-dog mode."
     self.alert = True
     self.alertMode()
 
+  def get_status(self):
+    print "Sending status messages"
+    self.con.send("PRIVMSG "+self.CHANNELINIT+ " :" + "Server up since: "+self.online_from + self.END)
+    self.con.send("PRIVMSG "+self.CHANNELINIT+ " :" + "Alert since: "+self.alert_since + self.END)
+    self.con.send("PRIVMSG "+self.CHANNELINIT+ " :" + "Last movement: "+self.last_danger + self.END)
+
   def alertMode(self):
+    self.con.send("PRIVMSG "+self.CHANNELINIT+" :"+ "HLEP, moving things!" + self.END)
+    self.last_danger = strftime("%d-%m-%Y %H:%M:%S")
     print "Following data from arduino"
     data = 0
     while self.alert:
@@ -91,6 +113,16 @@ class controller(object):
         self.danger = True
         break
 
+  def alert_sound(self):
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setwarnings(False)
+    GPIO.setup(22, GPIO.OUT)
+    
+    bell = GPIO.PWM(22, 1500)
+    bell.start(1)
+    time.sleep(100)
+    bell.start(0)
+
   def run(self):
     self.con.connect((self.HOST, self.PORT))
     self.con.send("NICK " + self.NICK + self.END)
@@ -100,6 +132,10 @@ class controller(object):
     while self.active:
       if self.danger:
         print "Do something about it, please!"
+        try:
+          self.alert_sound()
+        except:
+          print "Alert sound couldn't be called."
       data = self.con.recv(4096)
       self.translate(data)
 
