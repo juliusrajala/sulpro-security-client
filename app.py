@@ -1,3 +1,5 @@
+#-*- coding: utf-8 -*-
+
 from flask import Flask, request, redirect
 import twilio.twiml
 import messenger
@@ -7,7 +9,7 @@ app = Flask(__name__)
 @app.route("/", methods = ['GET', 'POST'])
 def hello_world():
   resp = twilio.twiml.Response()
-  resp.message("Hello world")
+  resp.message("Hälytys, tehkää jotain!")
   return str(resp)
 
 def main(active):
