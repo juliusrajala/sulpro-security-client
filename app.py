@@ -1,49 +1,21 @@
-#-*- coding: utf-8 -*-
-import settings as keys
-import number
-from twilio.rest import TwilioRestClient
+from flask import Flask, request, redirect
+import twilio.twiml
+import messenger
 
+app = Flask(__name__)
 
-class app(object):
-  def __init__(self):
-    #Blah blah
-    print "Initializing app class"
-    self.active = True
-    #Initializing twilio keys.
-    try:
-      self.twilio_id = keys.twilio_sid
-      self.twilio_secret=keys.twilio_secret
-      print "Keys initialized"
-    except:
-      print "Key initialization failed, closing application"
-      self.active = False
-    #Initializing Client next
-    try:
-      self.client = TwilioRestClient(self.twilio_id, self.twilio_secret)
-    except:
-      print "Client initialization failed."
+@app.route("/", methods = ['GET', 'POST'])
+def hello_world():
+  resp = twilio.twiml.Response()
+  resp.message("Hello world")
+  return str(resp)
 
-  def send_message(self, message):
-    try:
-      message = self.client.messages.create(
-        body = message,
-        to = "+358504919330",
-        from_ = number.twilio_number
-        )
-      print message.sid
-    except:
-      print "Message delivery failed."
-      raise
-
-  def main(self):
-    #This will be where the main loop lives.
-    while self.active:
-      print "Sending message to Julius"
-      self.send_message("Tämä on testi")
-      self.active = False
-      print "Running the while loop"
-
+def main(active):
+  while active:
+    print "This loop is active"
+    active = False
 
 if __name__ == '__main__':
-  ourApp = app()
-  ourApp.main()
+  active = True
+  app.run(debug=True)
+  # main(active)
