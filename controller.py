@@ -7,11 +7,13 @@ from messenger import Messenger
 class controller(object):
   def __init__(self):
     self.con = socket.socket()
+    self.messenger = Messenger()
+    
+    #Different states of the controller
     self.alert = False
     self.active = True
     self.danger = False
-    self.messenger = Messenger()
-    
+
     #IRC - Connection - Specs
     self.HOST = "irc.utu.fi"
     self.PORT = 6667
@@ -36,6 +38,7 @@ class controller(object):
     }
     message = data.split(" ")
     if message[0] == "PING":
+      print message
       self.ping_response(message[1])
       return
     if self.CHANNELINIT in message:
@@ -54,7 +57,7 @@ class controller(object):
   def ping_response(self, extra):
     print "PONG " + extra.split(":")[1]
     print extra
-    self.con.send("PONG :"+ extra.split(":")[1]+self.END)
+    self.con.send("PONG "+ self.HOST +" "+ extra.split(":")[1]+self.END)
 
   def exit(self):
     print "Shutting things down."
@@ -63,10 +66,13 @@ class controller(object):
 
   def handle_alert(self):
     print "Handling an alert."
+    self.danger = False
     self.messenger.send_message("The alert was cancelled at: "+ strftime("%d-%m-%Y %H:%M:%S"))
 
   def stop_watching(self):
-    print "Shutting down alerts."
+    print "Going to sleep and dream about things that don't scare me."
+    self.alert = False
+    self.danger = False;
 
   def start_watching(self):
     print "Going into watch-dog mode."
@@ -79,9 +85,10 @@ class controller(object):
     while self.alert:
       #Do alert stuff.
       data += 1
-      if data > 3000000:
+      if data > 30000000:
         print "Alert, movement detected!"
         self.messenger.send_message("Danger, danger! Movement at: " + strftime("%d-%m-%Y %H:%M:%S"))
+        self.danger = True
         break
 
   def run(self):
@@ -91,6 +98,8 @@ class controller(object):
     self.con.send("JOIN " + self.CHANNELINIT+self.END)
 
     while self.active:
+      if self.danger:
+        print "Do something about it, please!"
       data = self.con.recv(4096)
       self.translate(data)
 
