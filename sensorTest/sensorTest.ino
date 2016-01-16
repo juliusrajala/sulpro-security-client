@@ -26,9 +26,9 @@ void loop(){
     
     if (pirState == LOW) {
       // we have just turned on
-      Serial.println("Motion detected!");
+      //Serial.println("Motion detected!");
       // We only want to print on the output change, not state
-      pirState = HIGH;
+      //pirState = HIGH;
       Serial.write(HIGH);
     }
   } else {
