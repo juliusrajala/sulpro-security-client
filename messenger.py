@@ -4,7 +4,7 @@ import number
 from twilio.rest import TwilioRestClient
 
 
-class messenger(object):
+class Messenger(object):
   def __init__(self):
     #Blah blah
     print "Initializing app class"
@@ -23,14 +23,11 @@ class messenger(object):
     except:
       print "Client initialization failed."
 
-  def send_message(self, number, message):
-    print self.twilio_id
-    print self.twilio_secret
-    print number.twilio_number
+  def send_message(self, message):
     try:
       message = self.client.messages.create(
         body = message,
-        to = number,
+        to = number.alert_number,
         from_ = number.twilio_number
         )
       print message.sid
