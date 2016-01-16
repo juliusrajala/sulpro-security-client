@@ -19,10 +19,10 @@ void setup() {
 
 void loop(){
   val = digitalRead(inputPin);  // read input value
+  Serial.println(val);
   if (val == HIGH) {            // check if the input is HIGH
     playTone(300, 160);
     delay(150);
-
     
     if (pirState == LOW) {
       // we have just turned on
