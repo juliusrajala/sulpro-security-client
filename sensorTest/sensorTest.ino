@@ -29,6 +29,7 @@ void loop(){
       Serial.println("Motion detected!");
       // We only want to print on the output change, not state
       pirState = HIGH;
+      Serial.write(HIGH);
     }
   } else {
       playTone(0, 0);
@@ -38,6 +39,7 @@ void loop(){
       Serial.println("Motion ended!");
       // We only want to print on the output change, not state
       pirState = LOW;
+      Serial.write(LOW);
     }
   }
 }
