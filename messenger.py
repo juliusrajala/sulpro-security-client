@@ -7,7 +7,7 @@ from twilio.rest import TwilioRestClient
 class Messenger(object):
   def __init__(self):
     #Blah blah
-    print "Initializing app class"
+    print "Initializing twilio messenger"
     self.active = True
     #Initializing twilio keys.
     try:
