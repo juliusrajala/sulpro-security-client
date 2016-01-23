@@ -1,7 +1,7 @@
 import serial
 from threading import Thread
 
-class serial_listener(Thread):
+class Serial_listener(Thread):
 
 	
 
@@ -30,6 +30,7 @@ class serial_listener(Thread):
 
 			if self.is_alert == 5:
 				self.alert_on()
+				break
 
 
 

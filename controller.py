@@ -3,6 +3,7 @@ import socket
 import datetime
 from time import gmtime, strftime
 from messenger import Messenger
+from serial_listener import Serial_listener
 
 import time
 try:
@@ -15,6 +16,7 @@ class controller(object):
   def __init__(self):
     self.con = socket.socket()
     self.messenger = Messenger()
+    self.listener = Serial_listener(self.alert())
     
     #Variables to display uptime etc.
     self.online_from = strftime("%d-%m-%Y %H:%M:%S")
@@ -103,15 +105,12 @@ class controller(object):
     self.con.send("PRIVMSG "+self.CHANNELINIT+" :"+ "HLEP, moving things!" + self.END)
     self.last_danger = strftime("%d-%m-%Y %H:%M:%S")
     print "Following data from arduino"
-    data = 0
-    while self.alert:
-      #Do alert stuff.
-      data += 1
-      if data > 30000000:
-        print "Alert, movement detected!"
-        self.messenger.send_message("Danger, danger! Movement at: " + strftime("%d-%m-%Y %H:%M:%S"))
-        self.danger = True
-        break
+    listener.start()
+  
+  def alert(self):
+      print "Alert, movement detected!"
+      self.messenger.send_message("Danger, danger! Movement at: " + strftime("%d-%m-%Y %H:%M:%S"))
+      self.danger = True
 
   def alert_sound(self):
     GPIO.setmode(GPIO.BOARD)
