@@ -28,7 +28,7 @@ class serial_listener(Thread):
 			if self.heard != 1:
 				self.is_alert = 0
 
-			if self.is_alert >= 5:
+			if self.is_alert == 5:
 				self.alert_on()
 
 
