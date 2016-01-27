@@ -3,7 +3,7 @@ import socket
 import datetime
 from time import gmtime, strftime
 from messenger import Messenger
-from serial_listener import Serial_listener
+from serial_listenerr import Serial_listener
 
 import time
 try:
@@ -16,7 +16,8 @@ class controller(object):
   def __init__(self):
     self.con = socket.socket()
     self.messenger = Messenger()
-    self.listener = Serial_listener(self.alert())
+    self.listener = Serial_listener(self.alert_now())
+    
     
     #Variables to display uptime etc.
     self.online_from = strftime("%d-%m-%Y %H:%M:%S")
@@ -82,7 +83,7 @@ class controller(object):
   def handle_alert(self):
     print "Handling an alert."
     self.danger = False
-    self.messenger.send_message("The alert was cancelled at: "+ strftime("%d-%m-%Y %H:%M:%S"))
+   # self.messenger.send_message("The alert was cancelled at: "+ strftime("%d-%m-%Y %H:%M:%S"))
 
   def stop_watching(self):
     print "Going to sleep and dream about things that don't scare me."
@@ -105,11 +106,11 @@ class controller(object):
     self.con.send("PRIVMSG "+self.CHANNELINIT+" :"+ "HLEP, moving things!" + self.END)
     self.last_danger = strftime("%d-%m-%Y %H:%M:%S")
     print "Following data from arduino"
-    listener.start()
+    self.listener.thread.start()
   
-  def alert(self):
+  def alert_now(self):
       print "Alert, movement detected!"
-      self.messenger.send_message("Danger, danger! Movement at: " + strftime("%d-%m-%Y %H:%M:%S"))
+      #self.messenger.send_message("Danger, danger! Movement at: " + strftime("%d-%m-%Y %H:%M:%S"))
       self.danger = True
 
   def alert_sound(self):

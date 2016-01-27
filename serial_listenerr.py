@@ -1,7 +1,7 @@
 import serial
 from threading import Thread
 
-class Serial_listener(Thread):
+class Serial_listener(object):
 
 	
 
@@ -9,16 +9,15 @@ class Serial_listener(Thread):
 		self.heard = 0
 		self.tester = serial.Serial('/dev/ttyACM0', 9600)
 		self.is_alert = 0
+                
+                self.thread = Thread(target=self.run, args=())
+                self.thread.daemon = True                            
+		
 		self.callback = callback
 
 
 
 	def run(self):
-		self.listen_now()
-
-
-	def listen_now(self):
-
 		while True:
 			self.heard = self.tester.readline()
 			
@@ -30,7 +29,10 @@ class Serial_listener(Thread):
 
 			if self.is_alert == 5:
 				self.alert_on()
-				break
+				breakself.listen_now()
+
+
+	
 
 
 
