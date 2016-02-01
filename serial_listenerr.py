@@ -10,9 +10,10 @@ class Serial_listener(object):
 		self.tester = serial.Serial('/dev/ttyACM0', 9600)
 		self.is_alert = 0
                 
-                self.thread = Thread(target=self.run, args=())
-                self.thread.daemon = True                            
+        self.thread = Thread(target=self.run, args=())
+		self.thread.daemon = True                            
 		
+		#Alempi rivi kusee
 		self.callback = callback
 
 
