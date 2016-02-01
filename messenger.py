@@ -25,19 +25,20 @@ class Messenger(object):
 
   def send_message(self, message):
     try:
+      print()
       message = self.client.messages.create(
         body = message,
         to = number.alert_number,
         from_ = number.twilio_number
         )
-      print message.sid
+      #print message.sid
     except:
       print "Message delivery failed."
       raise
 
   def main(self):
     #This will be where the main loop lives.
-    # self.server.run(debug=True)
+     self.server.run(debug=True)
     while self.active:
       print "Sending message to Julius"
       message = raw_input("What do you want to send?\r\n")

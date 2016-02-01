@@ -12,11 +12,12 @@ except:
   print "Likely not using raspberry pi"
   pass
 
-class controller(object):
+class Controller(object):
   def __init__(self):
     self.con = socket.socket()
     self.messenger = Messenger()
-    self.listener = Serial_listener(self.alert_now())
+    self.listener = Serial_listener(callback = self)
+    self.start_watching()
     
     
     #Variables to display uptime etc.
@@ -83,7 +84,7 @@ class controller(object):
   def handle_alert(self):
     print "Handling an alert."
     self.danger = False
-   # self.messenger.send_message("The alert was cancelled at: "+ strftime("%d-%m-%Y %H:%M:%S"))
+    #self.messenger.send_message("The alert was cancelled at: "+ strftime("%d-%m-%Y %H:%M:%S"))
 
   def stop_watching(self):
     print "Going to sleep and dream about things that don't scare me."
@@ -139,6 +140,7 @@ class controller(object):
       data = self.con.recv(4096)
       self.translate(data)
 
+
 if __name__ == '__main__':
-  ctrl = controller()
+  ctrl = Controller()
   ctrl.run()
