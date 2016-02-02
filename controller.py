@@ -17,7 +17,7 @@ class Controller(object):
     self.con = socket.socket()
     self.messenger = Messenger()
     self.listener = Serial_listener(callback = self)
-    self.start_watching()
+    
     
     
     #Variables to display uptime etc.
